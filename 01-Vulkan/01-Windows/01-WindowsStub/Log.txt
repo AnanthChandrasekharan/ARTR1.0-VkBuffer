@@ -1,3 +1,0 @@
-WinMain() : Program started successfully.
-WinMain() : initialize() succeeded.
-uninitialize() : Program ended successfully.

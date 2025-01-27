@@ -1,9 +1,13 @@
 cls
 
-del *.exe *.res *.obj
+del Vk.exe Log.txt
 
-cl.exe /c /EHsc VK.c
+cl.exe /c /EHsc Vk.c
 
-rc.exe VK.rc
+rc.exe Vk.rc
 
-link.exe VK.obj VK.res User32.lib GDI32.lib /SUBSYSTEM:WINDOWS
+link.exe Vk.obj Vk.res Kernel32.lib User32.lib GDI32.lib /SUBSYSTEM:WINDOWS /MACHINE:x64
+
+del Vk.res Vk.obj
+
+Vk.exe

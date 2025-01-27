@@ -1,316 +1,323 @@
-// header files
-#include <Windows.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#include "VK.h"
 
-// macros
-#define WIN_WIDTH  800
+#include <stdio.h>		
+#include <stdlib.h>	
+#include <windows.h>		
+
+#include "VK.h"			
+#define LOG_FILE (char*)"Log.txt" 
+
+
+#define WIN_WIDTH 800
 #define WIN_HEIGHT 600
-#define WIN_TITLE  TEXT("VNR : Vulkan")
 
-// global function declarations
+
+// Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-// global variable declarations
-HWND            ghwnd        = NULL;
-BOOL            gbFullscreen = FALSE;
-BOOL            gbActive     = FALSE;
+// Global Variable Declarations
+FILE* gFILE = NULL;
+
+HWND ghwnd = NULL;
+BOOL gbActive = FALSE;
+DWORD dwStyle = 0;
+//WINDOWPLACEMENT wpPrev = { sizeof(WINDOWPLACEMENT) }; //dont do this as cpp style
 WINDOWPLACEMENT wpPrev;
-DWORD           dwStyle;
+BOOL gbFullscreen = FALSE;
 
-// for file IO
-FILE *gpFILE = NULL;
 
-// entry-point function
+/************************************************************/
+
+
+// Entry-Point Function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
 {
-    // function prototypes
-    int initialize(void);
-    void display(void);
-    void update(void);
-    void uninitialize();
+	// Function Declarations
+	int initialize(void);
+	void uninitialize(void);
+	void display(void);
+	void update(void);
 
-    // local variable declarations
-    WNDCLASSEX wndclass    = { sizeof(WNDCLASSEX) };
-    HWND       hwnd        = NULL;
-    TCHAR      szAppName[] = TEXT("VNRWindow");
-    BOOL       bDone       = FALSE;
-    MSG        msg         = { 0 };
+	// Local Variable Declarations
+	WNDCLASSEX wndclass;
+	HWND hwnd;
+	MSG msg;
+	TCHAR szAppName[] = TEXT("Anjaneya");
+	BOOL bDone = FALSE;
+	int iResult = 0;
 
-    // code
-    // open the log file
-    gpFILE = fopen("Log.txt", "w");
-    if(gpFILE == NULL)
-    {
-        MessageBox(NULL, TEXT("fopen() failed to open the log file."), TEXT("Error"), MB_OK | MB_ICONERROR);
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        fprintf(gpFILE, "%s() : Program started successfully.\n", __FUNCTION__);
-    }
+	int SW = GetSystemMetrics(SM_CXSCREEN);
+	int SH = GetSystemMetrics(SM_CYSCREEN);
+	int xCoordinate = ((SW / 2) - (WIN_WIDTH / 2));
+	int yCoordinate = ((SH / 2) - (WIN_HEIGHT / 2));
 
-    // fill the window class
-    wndclass.cbSize        = sizeof(WNDCLASSEX);
-    wndclass.style         = CS_VREDRAW | CS_HREDRAW | CS_OWNDC;
-    wndclass.cbClsExtra    = 0;
-    wndclass.cbWndExtra    = 0;
-    wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    wndclass.hInstance     = hInstance;
-    wndclass.hIcon         = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
-    wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    wndclass.lpfnWndProc   = WndProc;
-    wndclass.lpszClassName = szAppName;
-    wndclass.lpszMenuName  = NULL;
-    wndclass.hIconSm       = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
 
-    // register the window class
-    RegisterClassEx(&wndclass);
+	
+	// Code
 
-    // create the main window in memory
-    hwnd = CreateWindowEx(
-                            WS_EX_APPWINDOW, 
-                            szAppName, 
-                            WIN_TITLE, 
-                            WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
-                            (GetSystemMetrics(SM_CXSCREEN) - WIN_WIDTH) / 2,
-                            (GetSystemMetrics(SM_CYSCREEN) - WIN_HEIGHT) / 2,
-                            WIN_WIDTH,
-                            WIN_HEIGHT,
-                            HWND_DESKTOP,
-                            NULL,
-                            hInstance,
-                            NULL
-                         );
+	// Log File
+	gFILE = fopen(LOG_FILE, "w");
+	if (!gFILE)
+	{
+		MessageBox(NULL, TEXT("Program cannot open log file!"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		exit(0);
+	}
 
-    if(!hwnd)
-    {
-        MessageBox(NULL, TEXT("CreateWindowEx() failed."), TEXT("Error"), MB_OK | MB_ICONERROR);
-        exit(EXIT_FAILURE);
-    }
+	fprintf(gFILE, "WinMain()-> Program started successfully\n");
 
-    // copy the local window handle into the global window handle
-    ghwnd = hwnd;
 
-    // initialization
-    INT iResult = initialize();
-    if(iResult != 0)
-    {
-        MessageBox(NULL, TEXT("initialize() failed."), TEXT("Error"), MB_OK | MB_ICONERROR);
-        DestroyWindow(hwnd);
-    }
-    else
-    {
-        fprintf(gpFILE, "%s() : initialize() succeeded.\n", __FUNCTION__);
-    }
+	// WNDCLASSEX Initilization 
+	wndclass.cbSize = sizeof(WNDCLASSEX);
+	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.lpfnWndProc = WndProc;
+	wndclass.hInstance = hInstance;
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
+	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndclass.lpszClassName = szAppName;
+	wndclass.lpszMenuName = NULL;
+	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
 
-    // show the window
-    ShowWindow(hwnd, iCmdShow);
-    SetForegroundWindow(hwnd);
-    SetFocus(hwnd);
+	// Register WNDCLASSEX
+	RegisterClassEx(&wndclass);
 
-    // gameloop
-    while(bDone == FALSE)
-    {
-        ZeroMemory(&msg, sizeof(MSG));
-        if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
-            if(msg.message == WM_QUIT)
-            {
-                bDone = TRUE;
-            }
-            else
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-        }
-        else if(gbActive)
-        {
-            // Render
-            display();
 
-            // Update
-            update();
-        }
-    }
+	// Create Window								// glutCreateWindow
+	hwnd = CreateWindowEx(WS_EX_APPWINDOW,			// to above of taskbar for fullscreen
+						szAppName,
+						TEXT("Anjaneya: Vulkan"),
+						WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
+						xCoordinate,				// glutWindowPosition 1st Parameter
+						yCoordinate,				// glutWindowPosition 2nd Parameter
+						WIN_WIDTH,					// glutWindowSize 1st Parameter
+						WIN_HEIGHT,					// glutWindowSize 2nd Parameter
+						NULL,
+						NULL,
+						hInstance,
+						NULL);
 
-    // uninitialization
-    uninitialize();
-    
-    // un-register the window class
-    UnregisterClass(szAppName, hInstance);
+	ghwnd = hwnd;
 
-    return((int)msg.wParam);
+	// Initialization
+	iResult = initialize();
+	if (iResult != 0)
+	{
+		MessageBox(hwnd, TEXT("initialize() Failed!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		DestroyWindow(hwnd);
+	}
+
+	// Show The Window
+	ShowWindow(hwnd, iCmdShow);
+	UpdateWindow(hwnd);
+	SetForegroundWindow(hwnd);
+	SetFocus(hwnd);
+
+	// Game Loop
+	while (bDone == FALSE)
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+				bDone = TRUE;
+			else
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+		else
+		{
+			if (gbActive == TRUE)
+			{
+				display();
+				update();
+			}
+		}
+	}
+
+	// Uninitialization
+	uninitialize();	
+
+	return((int)msg.wParam);
 }
 
-// callback function
+
+// CALLBACK Function
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-    // function declarations
-    void resize(int width, int height);
-    void ToggleFullscreen(void);
+	// Function Declarations
+	void ToggleFullscreen( void );
+	void resize(int, int);
 
-    // code
-    switch(iMsg)
-    {
-    case WM_CREATE:
-        memset(&wpPrev, 0, sizeof(WINDOWPLACEMENT));
-        wpPrev.length = sizeof(WINDOWPLACEMENT);
-        break;
-    case WM_SETFOCUS:
-        gbActive = TRUE;
-        break;
-    case WM_KILLFOCUS:
-        gbActive = FALSE;
-        break;
-    case WM_ERASEBKGND:
-        return(0);
-    case WM_SIZE:
-        resize(LOWORD(lParam), HIWORD(lParam));
-        break;
-    case WM_KEYDOWN:
-        switch(LOWORD(wParam))
-        {
-        case VK_ESCAPE:
-            DestroyWindow(hwnd);
-            break;
-        default:
-            break;
-        }
-        break;
-    case WM_CHAR:
-        switch(LOWORD(wParam))
-        {
-        case 'F':
-        case 'f':
-            ToggleFullscreen();
-            break;
-        default:
-            break;
-        }
-        break;     
-    case WM_CLOSE:
-        DestroyWindow(hwnd);
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        break;
-    }
+	// Code
+	switch (iMsg)
+	{
+		case WM_CREATE:
+			memset((void*)&wpPrev, 0 , sizeof(WINDOWPLACEMENT));
+			wpPrev.length = sizeof(WINDOWPLACEMENT);
+		break;
+		
+		case WM_SETFOCUS:
+			gbActive = TRUE;
+			break;
 
-    return(DefWindowProc(hwnd, iMsg, wParam, lParam));
+		case WM_KILLFOCUS:
+			gbActive = FALSE;
+			break;
+
+		case WM_SIZE:
+			resize(LOWORD(lParam), HIWORD(lParam));
+			break;
+
+		/*
+		case WM_ERASEBKGND:
+			return(0);
+		*/
+
+		case WM_KEYDOWN:
+			switch (LOWORD(wParam))
+			{
+			case VK_ESCAPE:
+				fprintf(gFILE, "WndProc() VK_ESCAPE-> Program ended successfully.\n");
+				fclose(gFILE);
+				gFILE = NULL;
+				DestroyWindow(hwnd);
+				break;
+			}
+			break;
+
+		case WM_CHAR:
+			switch (LOWORD(wParam))
+			{
+			case 'F':
+			case 'f':
+				if (gbFullscreen == FALSE)
+				{
+					ToggleFullscreen();
+					gbFullscreen = TRUE;
+					fprintf(gFILE, "WndProc() WM_CHAR(F key)-> Program entered Fullscreen.\n");
+				}
+				else
+				{
+					ToggleFullscreen();
+					gbFullscreen = FALSE;
+					fprintf(gFILE, "WndProc() WM_CHAR(F key)-> Program ended Fullscreen.\n");
+				}
+				break;
+			}
+			break;
+
+		case WM_RBUTTONDOWN:								
+			DestroyWindow(hwnd);
+			break;
+
+		case WM_CLOSE:
+			uninitialize();
+			DestroyWindow(hwnd);
+			break;
+
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+		
+		default:
+			break;
+	}
+
+	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
 }
 
-// toggle fullscreen
+
 void ToggleFullscreen(void)
 {
-    // local variables
-    MONITORINFO monitorInfo = { sizeof(MONITORINFO) };
+	// Local Variable Declarations
+	MONITORINFO mi = { sizeof(MONITORINFO) };
 
-    // code
-    // if window isn't in fullscreen mode
-    if(gbFullscreen == FALSE)
-    {
-        dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
-        if(dwStyle & WS_OVERLAPPEDWINDOW)
-        {
-            if(GetWindowPlacement(ghwnd, &wpPrev) && 
-               GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &monitorInfo))
-            {
-                SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
-                SetWindowPos(
-                             ghwnd, 
-                             HWND_TOP, 
-                             monitorInfo.rcMonitor.left, 
-                             monitorInfo.rcMonitor.top,
-                             monitorInfo.rcMonitor.right  - monitorInfo.rcMonitor.left,
-                             monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
-                             SWP_NOZORDER | SWP_FRAMECHANGED
-                            );
+	// Code
+	if (gbFullscreen == FALSE)
+	{
+		dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
 
-                ShowCursor(FALSE);
+		if (dwStyle & WS_OVERLAPPEDWINDOW)
+		{
+			if (GetWindowPlacement(ghwnd, &wpPrev) && GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &mi))
+			{
+				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
 
-                gbFullscreen = TRUE;
-            }
-        }
-    }
-    else // window is already in fullscreen mode
-    {
-        SetWindowPlacement(ghwnd, &wpPrev);
-        SetWindowLong(ghwnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
-        SetWindowPos(
-                     ghwnd, 
-                     HWND_TOP, 
-                     0, 
-                     0, 
-                     0, 
-                     0, 
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED
-                    );
-        
-        ShowCursor(TRUE);
+				SetWindowPos(ghwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_NOZORDER | SWP_FRAMECHANGED);
+				// HWND_TOP ~ WS_OVERLAPPED, rc ~ RECT, SWP_FRAMECHANGED ~ WM_NCCALCSIZE msg
+			}
+		}
 
-        gbFullscreen = FALSE;
-    }
+		ShowCursor(FALSE);
+	}
+	else {
+		SetWindowPlacement(ghwnd, &wpPrev);
+		SetWindowLong(ghwnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPos(ghwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_FRAMECHANGED);
+		// SetWindowPos has greater priority than SetWindowPlacement and SetWindowStyle for Z-Order
+		ShowCursor(TRUE);
+	}
 }
+
 
 int initialize(void)
 {
-    // function declarations
-    
-    // code
-
-    return(0);
+	// Code
+	return(0);
 }
+
 
 void resize(int width, int height)
 {
-    // code
-    if(height <= 0)
-    {
-        height = 1;
-    }
+	// Code
 }
+
 
 void display(void)
 {
-    // code
+	// Code
 }
+
 
 void update(void)
 {
-    // code
+	// Code
 }
+
 
 void uninitialize(void)
 {
-    // function declarations
-    void ToggleFullscreen(void);
+		// Function Declarations
+		void ToggleFullScreen(void);
 
-    // code
-    // if application is exitting in fullscreen
-    if(gbFullscreen == TRUE)
-    {
-        ToggleFullscreen();
-        gbFullscreen = FALSE;
-    }
 
-    // Destroy window
-    if(ghwnd)
-    {
-        DestroyWindow(ghwnd);
-        ghwnd = NULL;
-    }
+		if (gbFullscreen == TRUE)
+		{
+			ToggleFullscreen();
+			gbFullscreen = FALSE;
+		}
 
-    // close the log file
-    if(gpFILE)
-    {
-        fprintf(gpFILE, "%s() : Program ended successfully.\n", __FUNCTION__);
-        fclose(gpFILE);
-        gpFILE = NULL;
-    }
+		// Destroy Window
+		if (ghwnd)
+		{
+			DestroyWindow(ghwnd);
+			ghwnd = NULL;
+		}
+
+		// Close the log file
+		if (gFILE)
+		{
+			fprintf(gFILE, "uninitialize()-> Program ended successfully.\n");
+			fclose(gFILE);
+			gFILE = NULL;
+		}
+
 }
+
+
+
+
+

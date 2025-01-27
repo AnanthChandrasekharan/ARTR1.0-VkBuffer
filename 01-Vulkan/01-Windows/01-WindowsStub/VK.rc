@@ -1,4 +1,6 @@
-#include <windows.h>
-#include "VK.h"
 
-MYICON ICON MyIcon.ico
+#include <windows.h>
+
+#include "Vk.h"
+
+MYICON ICON Anjaneya.ico 
