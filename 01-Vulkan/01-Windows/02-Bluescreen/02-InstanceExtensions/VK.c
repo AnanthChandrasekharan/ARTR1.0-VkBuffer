@@ -18,6 +18,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 // Global Variable Declarations
 FILE* gFILE = NULL;
 
+const char* gpszAppName = "ARTR";
+
 HWND ghwnd = NULL;
 BOOL gbActive = FALSE;
 DWORD dwStyle = 0;
@@ -42,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WNDCLASSEX wndclass;
 	HWND hwnd;
 	MSG msg;
-	TCHAR szAppName[] = TEXT("Anjaneya");
+	TCHAR szAppName[256];
 	BOOL bDone = FALSE;
 	int iResult = 0;
 
@@ -62,9 +64,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		MessageBox(NULL, TEXT("Program cannot open log file!"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		exit(0);
 	}
-
-	fprintf(gFILE, "WinMain()-> Program started successfully\n");
-
+	else
+	{
+		fprintf(gFILE, "WinMain()-> Program started successfully\n");
+	}
+	
+	wsprintf(szAppName, TEXT("%s"), gpszAppName);
 
 	// WNDCLASSEX Initilization 
 	wndclass.cbSize = sizeof(WNDCLASSEX);
