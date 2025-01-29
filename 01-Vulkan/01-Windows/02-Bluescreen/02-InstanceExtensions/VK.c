@@ -1,4 +1,4 @@
-//Anjaneya - ARTR 1.0 VkBuffer Group(Rama)
+//Anjaneya
 
 #include <stdio.h>		
 #include <stdlib.h>	
