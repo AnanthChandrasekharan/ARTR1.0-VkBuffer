@@ -8,8 +8,8 @@
 #define LOG_FILE (char*)"Log.txt" 
 
 //Vulkan related header files
-#define VK_USE_PLATFORM_WIN32_KHR (macro to identify platform) // XLIB_KHR, MACOS_KHR & MOLTEN something
-#include <vulkan/ vulkan.h> //(Only those members are enabled connected with above macro {conditional compilation using #ifdef internally})
+#define VK_USE_PLATFORM_WIN32_KHR // XLIB_KHR, MACOS_KHR & MOLTEN something
+#include <vulkan/vulkan.h> //(Only those members are enabled connected with above macro {conditional compilation using #ifdef internally})
 
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
