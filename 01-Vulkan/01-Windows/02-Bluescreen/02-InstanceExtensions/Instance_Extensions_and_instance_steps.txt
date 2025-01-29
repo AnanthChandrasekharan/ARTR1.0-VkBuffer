@@ -16,9 +16,9 @@ Accordingly set two global variables, "required extension count" and "required e
 
 6. As not needed hence forth , free local string array
 
-7. Print whether our Vulkan driver supports our required extension names or not (He log madhe yenar. Jithe print asel sarv log madhe yenar)
+7. Print whether our Vulkan driver supports our required instance extension names or not (He log madhe yenar. Jithe print asel sarv log madhe yenar)
 
-8. Print only supported extension names
+8. Print only enabled extension names
 
 ////////////////////////////////////////////////
 
