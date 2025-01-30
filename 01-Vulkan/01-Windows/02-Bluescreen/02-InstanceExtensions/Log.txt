@@ -18,11 +18,10 @@ FillInstanceExtensionNames(): Vulkan Extension Name = VK_NV_display_stereo
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_NV_external_memory_capabilities
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_KHR_portability_enumeration
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_LUNARG_direct_driver_loading
-FillInstanceExtensionNames(): Vulkan Extension Name = 
 FillInstanceExtensionNames(): VK_KHR_SURFACE_EXTENSION_NAME is found
 FillInstanceExtensionNames(): VK_KHR_WIN32_SURFACE_EXTENSION_NAME is found
 FillInstanceExtensionNames(): Enabled Vulkan Instance Extension Name = VK_KHR_surface
 FillInstanceExtensionNames(): Enabled Vulkan Instance Extension Name = VK_KHR_win32_surface
 WinMain(): FillInstanceExtensionNames() succedded
 WinMain(): initialize() succedded
-uninitialize()-> Program ended successfully.
+WndProc() VK_ESCAPE-> Program ended successfully.
