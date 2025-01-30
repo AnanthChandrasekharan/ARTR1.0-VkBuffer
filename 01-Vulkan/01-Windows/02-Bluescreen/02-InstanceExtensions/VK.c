@@ -1,4 +1,4 @@
-//Anjaneya
+//Anjaneya - ARTR 1.0 VkBuffer Group(Rama)
 
 #include <stdio.h>		
 #include <stdlib.h>	
@@ -120,14 +120,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	vkResult = initialize();
 	if (vkResult != VK_SUCCESS)
 	{
-		MessageBox(hwnd, TEXT("WinMain(): initialize() Failed!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "WinMain(): initialize()  function failed\n");
 		DestroyWindow(hwnd);
 		hwnd = NULL;
 	}
 	else
 	{
-		MessageBox(hwnd, TEXT("WinMain(): initialize() suceeded!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "WinMain(): initialize() succedded\n");
 	}
 
@@ -297,13 +295,11 @@ VkResult initialize(void)
 	vkResult = FillInstanceExtensionNames();
 	if (vkResult != VK_SUCCESS)
 	{
-		MessageBox(hwnd, TEXT("initialize(): FillInstanceExtensionNames() Failed!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "WinMain(): FillInstanceExtensionNames()  function failed\n");
 		return vkResult;
 	}
 	else
 	{
-		MessageBox(hwnd, TEXT("initialize(): FillInstanceExtensionNames() suceeded!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "WinMain(): FillInstanceExtensionNames() succedded\n");
 	}
 
@@ -382,13 +378,11 @@ VkResult FillInstanceExtensionNames(void)
 	*/
 	if (vkResult != VK_SUCCESS)
 	{
-		MessageBox(hwnd, TEXT("FillInstanceExtensionNames(): First call to vkEnumerateInstanceExtensionProperties() Failed!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "FillInstanceExtensionNames(): First call to vkEnumerateInstanceExtensionProperties()  function failed\n");
 		return vkResult;
 	}
 	else
 	{
-		MessageBox(hwnd, TEXT("FillInstanceExtensionNames(): First call to vkEnumerateInstanceExtensionProperties() suceeded!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "FillInstanceExtensionNames(): First call to vkEnumerateInstanceExtensionProperties() succedded\n");
 	}
 
@@ -412,13 +406,11 @@ VkResult FillInstanceExtensionNames(void)
 	vkResult = vkEnumerateInstanceExtensionProperties(NULL, &instanceExtensionCount, vkExtensionProperties_array);
 	if (vkResult != VK_SUCCESS)
 	{
-		MessageBox(hwnd, TEXT("FillInstanceExtensionNames(): Second call to vkEnumerateInstanceExtensionProperties() Failed!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "FillInstanceExtensionNames(): Second call to vkEnumerateInstanceExtensionProperties()  function failed\n");
 		return vkResult;
 	}
 	else
 	{
-		MessageBox(hwnd, TEXT("FillInstanceExtensionNames(): Second call to vkEnumerateInstanceExtensionProperties() suceeded!\n"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		fprintf(gFILE, "FillInstanceExtensionNames(): Second call to vkEnumerateInstanceExtensionProperties() succedded\n");
 	}
 
@@ -493,7 +485,7 @@ VkResult FillInstanceExtensionNames(void)
 	if (vulkanSurfaceExtensionFound == VK_FALSE)
 	{
 		//Type mismatch in return VkResult and VKBool32, so return hardcoded failure
-		vkResult = VK_ERROR_INITIALIAZATION_FAILED; //return hardcoded failure
+		vkResult = VK_ERROR_INITIALIZATION_FAILED; //return hardcoded failure
 		fprintf(gFILE, "FillInstanceExtensionNames(): VK_KHR_SURFACE_EXTENSION_NAME not found\n");
 		return vkResult;
 	}
@@ -505,7 +497,7 @@ VkResult FillInstanceExtensionNames(void)
 	if (vulkanWin32SurfaceExtensionFound == VK_FALSE)
 	{
 		//Type mismatch in return VkResult and VKBool32, so return hardcoded failure
-		vkResult = VK_ERROR_INITIALIAZATION_FAILED; //return hardcoded failure
+		vkResult = VK_ERROR_INITIALIZATION_FAILED; //return hardcoded failure
 		fprintf(gFILE, "FillInstanceExtensionNames(): VK_KHR_WIN32_SURFACE_EXTENSION_NAME not found\n");
 		return vkResult;
 	}

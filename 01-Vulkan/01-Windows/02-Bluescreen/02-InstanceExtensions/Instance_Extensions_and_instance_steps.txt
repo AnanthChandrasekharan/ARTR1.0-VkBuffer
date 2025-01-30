@@ -10,8 +10,8 @@ Steps to get Instance extensions ?
 4. As not required here onwards, free VkExtensionProperties array
 
 5. Find whether above extension names contain our required two extensions
-VK_KHR_SURFACE_EXTENSION_NAME
-VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+VK_KHR_SURFACE_EXTENSION_NAME macro
+VK_KHR_WIN32_SURFACE_EXTENSION_NAME macro
 Accordingly set two global variables, "required extension count" and "required extension names array"
 
 6. As not needed hence forth , free local string array
