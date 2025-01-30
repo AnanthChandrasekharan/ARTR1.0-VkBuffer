@@ -429,7 +429,7 @@ VkResult FillInstanceExtensionNames(void)
 		//Add log here later for success
 	}
 
-	for (uint32_t i =0; i <= instanceExtensionCount; i++)
+	for (uint32_t i = 0; i < instanceExtensionCount; i++)
 	{
 		//https://registry.khronos.org/vulkan/specs/latest/man/html/VkExtensionProperties.html
 		instanceExtensionNames_array[i] = (char*)malloc( sizeof(char) * (strlen(vkExtensionProperties_array[i].extensionName) + 1));
