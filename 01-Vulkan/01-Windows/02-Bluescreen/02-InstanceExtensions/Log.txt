@@ -24,4 +24,4 @@ FillInstanceExtensionNames(): Enabled Vulkan Instance Extension Name = VK_KHR_su
 FillInstanceExtensionNames(): Enabled Vulkan Instance Extension Name = VK_KHR_win32_surface
 WinMain(): FillInstanceExtensionNames() succedded
 WinMain(): initialize() succedded
-WndProc() VK_ESCAPE-> Program ended successfully.
+uninitialize()-> Program ended successfully.
