@@ -365,6 +365,16 @@ void uninitialize(void)
 			DestroyWindow(ghwnd);
 			ghwnd = NULL;
 		}
+		
+		if(vkSurfaceKHR)
+		{
+			/*
+			The destroy() of vkDestroySurfaceKHR() generic not platform specific
+			*/
+			vkDestroySurfaceKHR(vkInstance, vkSurfaceKHR, NULL); //https://registry.khronos.org/vulkan/specs/latest/man/html/vkDestroySurfaceKHR.html
+			vkSurfaceKHR = VK_NULL_HANDLE;
+			fprintf(gFILE, "uninitialize(): vkDestroySurfaceKHR() sucedded\n");
+		}
 
 		/*
 		Destroy VkInstance in uninitialize()
@@ -647,7 +657,7 @@ VkResult GetSupportedSurface(void)
 	memset((void*)&vkWin32SurfaceCreateInfoKHR, 0 , sizeof(struct VkWin32SurfaceCreateInfoKHR));
 	
 	/*
-	nitialize it , particularly its HINSTANCE and HWND members
+	Initialize it , particularly its HINSTANCE and HWND members
 	*/
 	//https://registry.khronos.org/vulkan/specs/latest/man/html/VkWin32SurfaceCreateInfoKHR.html
 	vkWin32SurfaceCreateInfoKHR.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;

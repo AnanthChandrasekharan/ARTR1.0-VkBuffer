@@ -28,5 +28,5 @@ initialize(): CreateVulkanInstance() succedded
 GetSupportedSurface(): vkCreateWin32SurfaceKHR() succedded
 initialize(): GetSupportedSurface() succedded
 WinMain(): initialize() succedded
-uninitialize(): vkDestroyInstance() sucedded
-uninitialize()-> Program ended successfully.
+WndProc() WM_CHAR(F key)-> Program entered Fullscreen.
+WndProc() VK_ESCAPE-> Program ended successfully.

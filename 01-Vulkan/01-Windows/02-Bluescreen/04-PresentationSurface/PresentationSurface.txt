@@ -9,3 +9,5 @@ Steps for presentation surface
 
 4. Now call VkCreateWin32SurfaceKHR() to create the presentation surface object
 
+5. uninitialize resentation surface object
+
