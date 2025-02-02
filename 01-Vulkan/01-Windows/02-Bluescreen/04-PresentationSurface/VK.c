@@ -46,6 +46,9 @@ const char* enabledInstanceExtensionNames_array[2];
 VkInstance vkInstance = VK_NULL_HANDLE;
 
 //Vulkan Presentation Surface
+/*
+Declare a global variable to hold presentation surface object
+*/
 VkSurfaceKHR vkSurfaceKHR = VK_NULL_HANDLE;
 
 // Entry-Point Function
@@ -637,10 +640,15 @@ VkResult GetSupportedSurface(void)
 	//Variable declarations
 	VkResult vkResult = VK_SUCCESS;
 	
+	/*
+	Declare and memset a platform(Windows, Linux , Android etc) specific SurfaceInfoCreate structure
+	*/
 	VkWin32SurfaceCreateInfoKHR vkWin32SurfaceCreateInfoKHR;
-
 	memset((void*)&vkWin32SurfaceCreateInfoKHR, 0 , sizeof(struct VkWin32SurfaceCreateInfoKHR));
 	
+	/*
+	nitialize it , particularly its HINSTANCE and HWND members
+	*/
 	//https://registry.khronos.org/vulkan/specs/latest/man/html/VkWin32SurfaceCreateInfoKHR.html
 	vkWin32SurfaceCreateInfoKHR.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	vkWin32SurfaceCreateInfoKHR.pNext = NULL;
@@ -648,6 +656,9 @@ VkResult GetSupportedSurface(void)
 	vkWin32SurfaceCreateInfoKHR.hinstance = (HINSTANCE)GetWindowLongPtr(ghwnd, GWLP_HINSTANCE); //This member can also be initialized by using (HINSTANCE)GetModuleHandle(NULL); {typecasted HINSTANCE}
 	vkWin32SurfaceCreateInfoKHR.hwnd = ghwnd;
 	
+	/*
+	Now call VkCreateWin32SurfaceKHR() to create the presentation surface object
+	*/
 	//https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateWin32SurfaceKHR.html
 	vkResult = vkCreateWin32SurfaceKHR(vkInstance, &vkWin32SurfaceCreateInfoKHR, NULL, &vkSurfaceKHR);
 	if (vkResult != VK_SUCCESS)
