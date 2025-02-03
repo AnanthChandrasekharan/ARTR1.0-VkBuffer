@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WNDCLASSEX wndclass;
 	HWND hwnd;
 	MSG msg;
-	TCHAR szAppName[] = TEXT("Anjaneya");
+	TCHAR szAppName[] = TEXT("01-WindowStub");
 	BOOL bDone = FALSE;
 	int iResult = 0;
 
@@ -87,7 +87,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	// Create Window								// glutCreateWindow
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,			// to above of taskbar for fullscreen
 						szAppName,
-						TEXT("Anjaneya: Vulkan"),
+						TEXT("01-WindowStub: Vulkan"),
 						WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
 						xCoordinate,				// glutWindowPosition 1st Parameter
 						yCoordinate,				// glutWindowPosition 2nd Parameter

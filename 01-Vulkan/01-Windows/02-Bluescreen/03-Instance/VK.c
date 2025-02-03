@@ -1,5 +1,3 @@
-//Anjaneya - ARTR 1.0 VkBuffer Group(Rama)
-
 #include <stdio.h>		
 #include <stdlib.h>	
 #include <windows.h>		
@@ -106,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	// Create Window								// glutCreateWindow
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,			// to above of taskbar for fullscreen
 						szAppName,
-						TEXT("Anjaneya: Vulkan"),
+						TEXT("03_Instance"),
 						WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
 						xCoordinate,				// glutWindowPosition 1st Parameter
 						yCoordinate,				// glutWindowPosition 2nd Parameter
@@ -467,7 +465,6 @@ VkResult FillInstanceExtensionNames(void)
 	*/
 	uint32_t instanceExtensionCount = 0;
 
-	//Anjaneya
 	//https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateInstanceExtensionProperties.html
 	vkResult = vkEnumerateInstanceExtensionProperties(NULL, &instanceExtensionCount, NULL);
 	/* like in OpenCL
