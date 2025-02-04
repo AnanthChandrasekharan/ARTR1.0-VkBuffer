@@ -311,7 +311,7 @@ VkResult initialize(void)
 	vkResult = CreateVulkanInstance();
 	if (vkResult != VK_SUCCESS)
 	{
-		fprintf(gFILE, "initialize(): CreateVulkanInstance() function failed with error code %d\n", vkResult);
+		fprintf(gFILE, "initialize(): CreateVulkanInstance() function failed\n");
 		return vkResult;
 	}
 	else
@@ -323,7 +323,7 @@ VkResult initialize(void)
 	vkResult = GetSupportedSurface();
 	if (vkResult != VK_SUCCESS)
 	{
-		fprintf(gFILE, "initialize(): GetSupportedSurface() function failed with error code %d\n", vkResult);
+		fprintf(gFILE, "initialize(): GetSupportedSurface() function failed\n");
 		return vkResult;
 	}
 	else
@@ -335,7 +335,7 @@ VkResult initialize(void)
 	vkResult = GetPhysicalDevice();
 	if (vkResult != VK_SUCCESS)
 	{
-		fprintf(gFILE, "initialize(): GetPhysicalDevice() function failed with error code %d\n", vkResult);
+		fprintf(gFILE, "initialize(): GetPhysicalDevice() function failed\n");
 		return vkResult;
 	}
 	else
@@ -366,7 +366,6 @@ void update(void)
 
 void uninitialize(void)
 {
-		// Function Declarations
 		void ToggleFullScreen(void);
 
 
@@ -575,7 +574,6 @@ VkResult FillInstanceExtensionNames(void)
 
 	for (uint32_t i =0; i < instanceExtensionCount; i++)
 	{
-		//https://registry.khronos.org/vulkan/specs/latest/man/html/VkExtensionProperties.html
 		instanceExtensionNames_array[i] = (char*)malloc( sizeof(char) * (strlen(vkExtensionProperties_array[i].extensionName) + 1));
 		memcpy(instanceExtensionNames_array[i], vkExtensionProperties_array[i].extensionName, (strlen(vkExtensionProperties_array[i].extensionName) + 1));
 		fprintf(gFILE, "FillInstanceExtensionNames(): Vulkan Extension Name = %s\n", instanceExtensionNames_array[i]);
@@ -596,7 +594,6 @@ VkResult FillInstanceExtensionNames(void)
 	VK_KHR_WIN32_SURFACE_EXTENSION_NAME
 	Accordingly set two global variables, "required extension count" and "required extension names array"
 	*/
-	//https://registry.khronos.org/vulkan/specs/latest/man/html/VkBool32.html -> Vulkan cha bool
 	VkBool32 vulkanSurfaceExtensionFound = VK_FALSE;
 	VkBool32 vulkanWin32SurfaceExtensionFound = VK_FALSE;
 	for (uint32_t i = 0; i < instanceExtensionCount; i++)
@@ -624,11 +621,10 @@ VkResult FillInstanceExtensionNames(void)
 	free(instanceExtensionNames_array);
 
 	/*
-	Print whether our required instance extension names or not (He log madhe yenar. Jithe print asel sarv log madhe yenar)
+	Print whether our required instance extension names or not
 	*/
 	if (vulkanSurfaceExtensionFound == VK_FALSE)
 	{
-		//Type mismatch in return VkResult and VKBool32, so return hardcoded failure
 		vkResult = VK_ERROR_INITIALIZATION_FAILED; //return hardcoded failure
 		fprintf(gFILE, "FillInstanceExtensionNames(): VK_KHR_SURFACE_EXTENSION_NAME not found\n");
 		return vkResult;
@@ -640,7 +636,6 @@ VkResult FillInstanceExtensionNames(void)
 
 	if (vulkanWin32SurfaceExtensionFound == VK_FALSE)
 	{
-		//Type mismatch in return VkResult and VKBool32, so return hardcoded failure
 		vkResult = VK_ERROR_INITIALIZATION_FAILED; //return hardcoded failure
 		fprintf(gFILE, "FillInstanceExtensionNames(): VK_KHR_WIN32_SURFACE_EXTENSION_NAME not found\n");
 		return vkResult;
@@ -675,17 +670,15 @@ VkResult GetSupportedSurface(void)
 	/*
 	Initialize it , particularly its HINSTANCE and HWND members
 	*/
-	//https://registry.khronos.org/vulkan/specs/latest/man/html/VkWin32SurfaceCreateInfoKHR.html
 	vkWin32SurfaceCreateInfoKHR.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	vkWin32SurfaceCreateInfoKHR.pNext = NULL;
 	vkWin32SurfaceCreateInfoKHR.flags = 0;
-	vkWin32SurfaceCreateInfoKHR.hinstance = (HINSTANCE)GetWindowLongPtr(ghwnd, GWLP_HINSTANCE); //This member can also be initialized by using (HINSTANCE)GetModuleHandle(NULL); {typecasted HINSTANCE}
+	vkWin32SurfaceCreateInfoKHR.hinstance = (HINSTANCE)GetWindowLongPtr(ghwnd, GWLP_HINSTANCE);
 	vkWin32SurfaceCreateInfoKHR.hwnd = ghwnd;
 	
 	/*
 	Now call VkCreateWin32SurfaceKHR() to create the presentation surface object
 	*/
-	//https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateWin32SurfaceKHR.html
 	vkResult = vkCreateWin32SurfaceKHR(vkInstance, &vkWin32SurfaceCreateInfoKHR, NULL, &vkSurfaceKHR);
 	if (vkResult != VK_SUCCESS)
 	{
@@ -709,7 +702,7 @@ VkResult GetPhysicalDevice(void)
 	/*
 	2. Call vkEnumeratePhysicalDevices() to get Physical device count
 	*/
-	vkResult = vkEnumeratePhysicalDevices(vkInstance, &physicalDeviceCount, NULL); //https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumeratePhysicalDevices.html (first call)
+	vkResult = vkEnumeratePhysicalDevices(vkInstance, &physicalDeviceCount, NULL);
 	if (vkResult != VK_SUCCESS)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): vkEnumeratePhysicalDevices() first call failed with error code %d\n", vkResult);
@@ -728,14 +721,13 @@ VkResult GetPhysicalDevice(void)
 	/*
 	3. Allocate VkPhysicalDeviceArray object according to above count
 	*/
-	VkPhysicalDevice *vkPhysicalDevice_array = NULL; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDevice.html
+	VkPhysicalDevice *vkPhysicalDevice_array = NULL; 
 	vkPhysicalDevice_array = (VkPhysicalDevice*)malloc(sizeof(VkPhysicalDevice) * physicalDeviceCount);
-	//for sake of brevity no error checking
 	
 	/*
 	4. Call vkEnumeratePhysicalDevices() again to fill above array
 	*/
-	vkResult = vkEnumeratePhysicalDevices(vkInstance, &physicalDeviceCount, vkPhysicalDevice_array); //https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumeratePhysicalDevices.html (seocnd call)
+	vkResult = vkEnumeratePhysicalDevices(vkInstance, &physicalDeviceCount, vkPhysicalDevice_array);
 	if (vkResult != VK_SUCCESS)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): vkEnumeratePhysicalDevices() second call failed with error code %d\n", vkResult);
@@ -747,87 +739,32 @@ VkResult GetPhysicalDevice(void)
 	}
 	
 	/*
-	5. Start a loop using physical device count and physical device, array obtained above (Note: declare a boolean bFound variable before this loop which will decide whether we found desired physical device or not)
-	Inside this loop, 
-	a. Declare a local variable to hold queque count
-	b. Call vkGetPhysicalDeviceQuequeFamilyProperties() to initialize above queque count variable
-	c. Allocate VkQuequeFamilyProperties array according to above count
-	d. Call vkGetPhysicalDeviceQuequeFamilyProperties() again to fill above array
-	e. Declare VkBool32 type array and allocate it using the same above queque count
-	f. Start a nested loop and fill above VkBool32 type array by calling vkGetPhysicalDeviceSurfaceSupportKHR()
-	g. Start another nested loop(not inside above loop , but nested in main loop) and check whether physical device
-	   in its array with its queque family "has"(Sir told to underline) graphics bit or not. 
-	   If yes then this is a selected physical device and assign it to global variable. 
-	   Similarly this index is the selected queque family index and assign it to global variable too and set bFound to true
-	   and break out from second nested loop
-	h. Now we are back in main loop, so free queque family array and VkBool32 type array
-	i. Still being in main loop, acording to bFound variable break out from main loop
-	j. free physical device array 
+	5. Start a loop using physical device count and physical device array
 	*/
-	VkBool32 bFound = VK_FALSE; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkBool32.html
+	VkBool32 bFound = VK_FALSE; 
 	for(uint32_t i = 0; i < physicalDeviceCount; i++)
 	{
-		/*
-		a. Declare a local variable to hold queque count
-		*/
 		uint32_t quequeCount = UINT32_MAX;
 		
-		
-		/*
-		b. Call vkGetPhysicalDeviceQuequeFamilyProperties() to initialize above queque count variable
-		*/
-		//Strange call returns void
-		//Error checking not done above as yacha VkResult nahi aahe
-		//Kiti physical devices denar , jevde array madhe aahet tevda -> Second parameter
-		//If physical device is present , then it must separate atleast one qurque family
-		vkGetPhysicalDeviceQueueFamilyProperties(vkPhysicalDevice_array[i], &quequeCount, NULL);//https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceQueueFamilyProperties.html
-		
-		/*
-		c. Allocate VkQuequeFamilyProperties array according to above count
-		*/
-		struct VkQueueFamilyProperties *vkQueueFamilyProperties_array = NULL;//https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueueFamilyProperties.html
+		vkGetPhysicalDeviceQueueFamilyProperties(vkPhysicalDevice_array[i], &quequeCount, NULL);
+
+		struct VkQueueFamilyProperties *vkQueueFamilyProperties_array = NULL;
 		vkQueueFamilyProperties_array = (struct VkQueueFamilyProperties*) malloc(sizeof(struct VkQueueFamilyProperties) * quequeCount);
-		//for sake of brevity no error checking
 		
-		/*
-		d. Call vkGetPhysicalDeviceQuequeFamilyProperties() again to fill above array
-		*/
-		vkGetPhysicalDeviceQueueFamilyProperties(vkPhysicalDevice_array[i], &quequeCount, vkQueueFamilyProperties_array);//https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceQueueFamilyProperties.html
-		
-		/*
-		e. Declare VkBool32 type array and allocate it using the same above queque count
-		*/
+		vkGetPhysicalDeviceQueueFamilyProperties(vkPhysicalDevice_array[i], &quequeCount, vkQueueFamilyProperties_array);
+
 		VkBool32 *isQuequeSurfaceSupported_array = NULL;
 		isQuequeSurfaceSupported_array = (VkBool32*) malloc(sizeof(VkBool32) * quequeCount);
-		//for sake of brevity no error checking
 		
-		/*
-		f. Start a nested loop and fill above VkBool32 type array by calling vkGetPhysicalDeviceSurfaceSupportKHR()
-		*/
 		for(uint32_t j =0; j < quequeCount ; j++)
 		{
-			//vkGetPhysicalDeviceSurfaceSupportKHR ->Supported surface la tumhi dilela surface support karto ka?
-			//vkPhysicalDevice_array[i] -> ya device cha
-			//j -> ha index
-			//vkSurfaceKHR -> ha surface
-			//isQuequeSurfaceSupported_array-> support karto ki nahi bhar
-			vkResult = vkGetPhysicalDeviceSurfaceSupportKHR(vkPhysicalDevice_array[i], j, vkSurfaceKHR, &isQuequeSurfaceSupported_array[j]); //https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceSurfaceSupportKHR.html
+			vkResult = vkGetPhysicalDeviceSurfaceSupportKHR(vkPhysicalDevice_array[i], j, vkSurfaceKHR, &isQuequeSurfaceSupported_array[j]);
 		}
 		
-		/*
-		g. Start another nested loop(not inside above loop , but nested in main loop) and check whether physical device
-		   in its array with its queque family "has"(Sir told to underline) graphics bit or not. 
-		   If yes then this is a selected physical device and assign it to global variable. 
-		   Similarly this index is the selected queque family index and assign it to global variable too and set bFound to true
-		   and break out from second nested loop
-		*/
 		for(uint32_t j =0; j < quequeCount ; j++)
 		{
-			//https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueueFamilyProperties.html
-			//https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueueFlagBits.html
 			if(vkQueueFamilyProperties_array[j].queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
-				//select ith graphic card, queque familt at j, bFound la TRUE karun break vha
 				if(isQuequeSurfaceSupported_array[j] == VK_TRUE)
 				{
 					vkPhysicalDevice_selected = vkPhysicalDevice_array[i];
@@ -838,16 +775,12 @@ VkResult GetPhysicalDevice(void)
 			}
 		}
 		
-		/*
-		h. Now we are back in main loop, so free queque family array and VkBool32 type array
-		*/
 		if(isQuequeSurfaceSupported_array)
 		{
 			free(isQuequeSurfaceSupported_array);
 			isQuequeSurfaceSupported_array = NULL;
 			fprintf(gFILE, "GetPhysicalDevice(): succedded to free isQuequeSurfaceSupported_array\n");
 		}
-		
 		
 		if(vkQueueFamilyProperties_array)
 		{
@@ -856,24 +789,15 @@ VkResult GetPhysicalDevice(void)
 			fprintf(gFILE, "GetPhysicalDevice(): succedded to free vkQueueFamilyProperties_array\n");
 		}
 		
-		/*
-		i. Still being in main loop, acording to bFound variable break out from main loop
-		*/
 		if(bFound == VK_TRUE)
 		{
 			break;
 		}
 	}
 	
-	/*
-	6. Do error checking according to value of bFound
-	*/
 	if(bFound == VK_TRUE)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): GetPhysicalDevice() suceeded to select required physical device with graphics enabled\n");
-		/*
-		j. free physical device array 
-		*/
 		if(vkPhysicalDevice_array)
 		{
 			free(vkPhysicalDevice_array);
@@ -887,30 +811,13 @@ VkResult GetPhysicalDevice(void)
 		vkResult = VK_ERROR_INITIALIZATION_FAILED;
 	}
 	
-	/*
-	7. memset the global physical device memory property structure
-	*/
-	memset((void*)&vkPhysicalDeviceMemoryProperties, 0, sizeof(struct VkPhysicalDeviceMemoryProperties)); //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceMemoryProperties.html
-	
-	/*
-	8. initialize above structure by using vkGetPhysicalDeviceMemoryProperties() //https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceMemoryProperties.html
-	No need of error checking as we already have physical device
-	*/
+	memset((void*)&vkPhysicalDeviceMemoryProperties, 0, sizeof(struct VkPhysicalDeviceMemoryProperties)); 
 	vkGetPhysicalDeviceMemoryProperties(vkPhysicalDevice_selected, &vkPhysicalDeviceMemoryProperties);
 	
-	/*
-	9. Declare a local structure variable VkPhysicalDeviceFeatures, memset it  and initialize it by calling vkGetPhysicalDeviceFeatures() 
-	// https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceFeatures.html
-	// //https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceFeatures.html
-	*/
 	VkPhysicalDeviceFeatures vkPhysicalDeviceFeatures;
 	memset((void*)&vkPhysicalDeviceFeatures, 0, sizeof(VkPhysicalDeviceFeatures));
 	vkGetPhysicalDeviceFeatures(vkPhysicalDevice_selected, &vkPhysicalDeviceFeatures);
 	
-	/*
-	10. By using "tescellation shader" member of above structure check selected device's tescellation shader support
-	11. By using "geometry shader" member of above structure check selected device's geometry shader support
-	*/
 	if(vkPhysicalDeviceFeatures.tessellationShader)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): Supported physical device supports tessellation shader\n");
@@ -928,9 +835,56 @@ VkResult GetPhysicalDevice(void)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): Supported physical device does not support geometry shader\n");
 	}
-	
+
+	// ADDED LINES: (No new braces; appended right before return)
+	VkPhysicalDeviceProperties deviceProps;
+	memset(&deviceProps, 0, sizeof(deviceProps));
+	vkGetPhysicalDeviceProperties(vkPhysicalDevice_selected, &deviceProps);
+	fprintf(gFILE, "\n=== SELECTED DEVICE DETAILS (NO NEW BLOCK) ===\n");
+	fprintf(gFILE, "Device Name         : %s\n", deviceProps.deviceName);
+	fprintf(gFILE, "API Version         : %u.%u.%u\n",
+		VK_VERSION_MAJOR(deviceProps.apiVersion),
+		VK_VERSION_MINOR(deviceProps.apiVersion),
+		VK_VERSION_PATCH(deviceProps.apiVersion));
+	fprintf(gFILE, "Driver Version      : %u\n", deviceProps.driverVersion);
+	fprintf(gFILE, "Vendor ID           : 0x%X\n", deviceProps.vendorID);
+	fprintf(gFILE, "Device ID           : 0x%X\n", deviceProps.deviceID);
+	fprintf(gFILE, "Device Type         : %d\n", deviceProps.deviceType);
+	fprintf(gFILE, "PipelineCacheUUID   : ");
+	for(int idx = 0; idx < VK_UUID_SIZE; idx++)
+		fprintf(gFILE, "%02X", deviceProps.pipelineCacheUUID[idx]);
+	fprintf(gFILE, "\n");
+
+	fprintf(gFILE, "\n>> Device Limits <<\n");
+	VkPhysicalDeviceLimits limits = deviceProps.limits;
+	fprintf(gFILE, "maxImageDimension2D : %u\n", limits.maxImageDimension2D);
+	fprintf(gFILE, "maxUniformBufferRange: %u\n", limits.maxUniformBufferRange);
+	fprintf(gFILE, "maxStorageBufferRange: %u\n", limits.maxStorageBufferRange);
+	fprintf(gFILE, "maxPushConstantsSize : %u\n", limits.maxPushConstantsSize);
+
+	fprintf(gFILE, "\n>> Memory Properties <<\n");
+	fprintf(gFILE, "Memory Heap Count  : %u\n", vkPhysicalDeviceMemoryProperties.memoryHeapCount);
+	for(uint32_t h = 0; h < vkPhysicalDeviceMemoryProperties.memoryHeapCount; h++)
+	{
+		VkMemoryHeap heap = vkPhysicalDeviceMemoryProperties.memoryHeaps[h];
+		fprintf(gFILE, "Heap[%u] Size=%llu bytes, Flags=0x%X\n", h, (unsigned long long)heap.size, heap.flags);
+	}
+	fprintf(gFILE, "Memory Type Count  : %u\n", vkPhysicalDeviceMemoryProperties.memoryTypeCount);
+	for(uint32_t t = 0; t < vkPhysicalDeviceMemoryProperties.memoryTypeCount; t++)
+	{
+		VkMemoryType memType = vkPhysicalDeviceMemoryProperties.memoryTypes[t];
+		fprintf(gFILE, "Type[%u] HeapIndex=%u, PropertyFlags=0x%X\n", t, memType.heapIndex, memType.propertyFlags);
+	}
+
+	fprintf(gFILE, "\n>> More Device Features <<\n");
+	fprintf(gFILE, "SamplerAnisotropy   : %s\n", (vkPhysicalDeviceFeatures.samplerAnisotropy ? "YES" : "NO"));
+	fprintf(gFILE, "multiDrawIndirect   : %s\n", (vkPhysicalDeviceFeatures.multiDrawIndirect ? "YES" : "NO"));
+	fprintf(gFILE, "fillModeNonSolid    : %s\n", (vkPhysicalDeviceFeatures.fillModeNonSolid ? "YES" : "NO"));
+	fprintf(gFILE, "wideLines           : %s\n", (vkPhysicalDeviceFeatures.wideLines ? "YES" : "NO"));
+	fprintf(gFILE, "largePoints         : %s\n", (vkPhysicalDeviceFeatures.largePoints ? "YES" : "NO"));
+	fprintf(gFILE, "shaderFloat64       : %s\n", (vkPhysicalDeviceFeatures.shaderFloat64 ? "YES" : "NO"));
+	fprintf(gFILE, "=== END SELECTED DEVICE DETAILS (NO NEW BLOCK) ===\n\n");
+	// END OF ADDED LINES
+
 	return vkResult;
 }
-
-
-
