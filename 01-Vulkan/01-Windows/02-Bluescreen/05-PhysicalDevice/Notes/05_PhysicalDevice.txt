@@ -50,6 +50,8 @@ Steps
 9. Declare a local structure variable VkPhysicalDeviceFeatures, memset it  and initialize it by calling vkGetPhysicalDeviceFeatures()
 10. By using "tescellation shader" member of above structure check selected device's tescellation shader support
 11. By using "geometry shader" member of above structure check selected device's geometry shader support
+12. There is no need to free/uninitialize/destroy selected physical device?
+	Bcoz later we will create Vulkan logical device which need to be destroyed and its destruction will automatically destroy selected physical device.
 
 	   
 	

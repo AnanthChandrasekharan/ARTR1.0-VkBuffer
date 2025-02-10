@@ -383,6 +383,8 @@ void uninitialize(void)
 			ghwnd = NULL;
 		}
 		
+		//No need to destroy selected physical device
+		
 		if(vkSurfaceKHR)
 		{
 			/*
@@ -928,6 +930,11 @@ VkResult GetPhysicalDevice(void)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): Supported physical device does not support geometry shader\n");
 	}
+	
+	/*
+	12. There is no need to free/uninitialize/destroy selected physical device?
+	Bcoz later we will create Vulkan logical device which need to be destroyed and its destruction will automatically destroy selected physical device.
+	*/
 	
 	return vkResult;
 }
