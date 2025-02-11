@@ -56,6 +56,13 @@ VkPhysicalDevice vkPhysicalDevice_selected = VK_NULL_HANDLE;//https://registry.k
 uint32_t graphicsQuequeFamilyIndex_selected = UINT32_MAX; //ata max aahe mag apan proper count deu
 VkPhysicalDeviceMemoryProperties vkPhysicalDeviceMemoryProperties; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceMemoryProperties.html (Itha nahi lagnaar, staging ani non staging buffers la lagel)
 
+/*
+PrintVulkanInfo() changes
+1. Remove local declaration of physicalDeviceCount and physicalDeviceArray from GetPhysicalDevice() and do it globally.
+*/
+uint32_t physicalDeviceCount = 0;
+VkPhysicalDevice *vkPhysicalDevice_array = NULL; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDevice.html
+
 // Entry-Point Function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
 {
@@ -303,6 +310,7 @@ VkResult initialize(void)
 	VkResult CreateVulkanInstance(void);
 	VkResult GetSupportedSurface(void);
 	VkResult GetPhysicalDevice(void);
+	VkResult PrintVulkanInfo(void);
 	
 	//Variable declarations
 	VkResult vkResult = VK_SUCCESS;
@@ -341,6 +349,18 @@ VkResult initialize(void)
 	else
 	{
 		fprintf(gFILE, "initialize(): GetPhysicalDevice() succedded\n");
+	}
+	
+	//Print Vulkan Info ;
+	vkResult = PrintVulkanInfo();
+	if (vkResult != VK_SUCCESS)
+	{
+		fprintf(gFILE, "initialize(): PrintVulkanInfo() function failed with error code %d\n", vkResult);
+		return vkResult;
+	}
+	else
+	{
+		fprintf(gFILE, "initialize(): PrintVulkanInfo() succedded\n");
 	}
 	
 	return vkResult;
@@ -706,7 +726,6 @@ VkResult GetPhysicalDevice(void)
 {
 	//Variable declarations
 	VkResult vkResult = VK_SUCCESS;
-	uint32_t physicalDeviceCount = 0;
 	
 	/*
 	2. Call vkEnumeratePhysicalDevices() to get Physical device count
@@ -731,7 +750,6 @@ VkResult GetPhysicalDevice(void)
 	/*
 	3. Allocate VkPhysicalDeviceArray object according to above count
 	*/
-	VkPhysicalDevice *vkPhysicalDevice_array = NULL; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDevice.html
 	vkPhysicalDevice_array = (VkPhysicalDevice*)malloc(sizeof(VkPhysicalDevice) * physicalDeviceCount);
 	//for sake of brevity no error checking
 	
@@ -875,15 +893,21 @@ VkResult GetPhysicalDevice(void)
 	if(bFound == VK_TRUE)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): GetPhysicalDevice() suceeded to select required physical device with graphics enabled\n");
+		
 		/*
-		j. free physical device array 
+		PrintVulkanInfo() changes
+		2. Accordingly remove physicaldevicearray freeing block from if(bFound == VK_TRUE) block and we will later write this freeing block in printVkInfo().
 		*/
+		
+		/*
+		//j. free physical device array 
 		if(vkPhysicalDevice_array)
 		{
 			free(vkPhysicalDevice_array);
 			vkPhysicalDevice_array = NULL;
 			fprintf(gFILE, "GetPhysicalDevice(): succedded to free vkPhysicalDevice_array\n");
 		}
+		*/
 	}
 	else
 	{
@@ -949,6 +973,120 @@ VkResult GetPhysicalDevice(void)
 	12. There is no need to free/uninitialize/destroy selected physical device?
 	Bcoz later we will create Vulkan logical device which need to be destroyed and its destruction will automatically destroy selected physical device.
 	*/
+	
+	return vkResult;
+}
+
+/*
+PrintVkInfo() changes
+3. Write printVkInfo() user defined function with following steps
+3a. Start a loop using global physical device count and inside it declare  and memset VkPhysicalDeviceProperties struct variable (https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceProperties.html).
+3b. Initialize this struct variable by calling vkGetPhysicalDeviceProperties() (https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceProperties.html) vulkan api.
+3c. Print Vulkan API version using apiVersion member of above struct.
+	This requires 3 Vulkan macros.
+3d. Print device name by using "deviceName" member of above struct.
+3e. Use "deviceType" member of above struct in a switch case block and accordingly print device type.
+3f. Print hexadecimal Vendor Id of device using "vendorId" member of above struct.
+3g. Print hexadecimal deviceID of device using "deviceId" member of struct.
+Note*: For sake of completeness, we can repeat a to h points from GetPhysicalDevice() {05-GetPhysicalDevice notes},
+but now instead of assigning selected queque and selected device, print whether this device supports graphic bit, compute bit, transfer bit using if else if else if blocks
+Similarly we also can repeat device features from GetPhysicalDevice() and can print all around 50 plus device features including support to tescellation shader and geometry shader.
+3h. Free physicaldevice array here which we removed from if(bFound == VK_TRUE) block of GetPhysicalDevice().
+*/
+VkResult PrintVulkanInfo(void)
+{
+	VkResult vkResult = VK_SUCCESS;
+	
+	//Code
+	fprintf(gFILE, "************************* Shree Ganesha******************************\n");
+	
+	/*
+	PrintVkInfo() changes
+	3a. Start a loop using global physical device count and inside it declare  and memset VkPhysicalDeviceProperties struct variable
+	*/
+	for(uint32_t i = 0; i < physicalDeviceCount; i++)
+	{
+		/*
+		PrintVkInfo() changes
+		3b. Initialize this struct variable by calling vkGetPhysicalDeviceProperties()
+		*/
+		VkPhysicalDeviceProperties vkPhysicalDeviceProperties; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceProperties.html
+		memset((void*)&vkPhysicalDeviceProperties, 0, sizeof(VkPhysicalDeviceProperties));
+		vkGetPhysicalDeviceProperties(vkPhysicalDevice_array[i], &vkPhysicalDeviceProperties ); //https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceProperties.html
+		
+		/*
+		PrintVkInfo() changes
+		3c. Print Vulkan API version using apiVersion member of above struct.
+		This requires 3 Vulkan macros.
+		*/
+		//uint32_t majorVersion,minorVersion,patchVersion;
+		uint32_t majorVersion = VK_VERSION_MAJOR(vkPhysicalDeviceProperties.apiVersion); //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDeviceProperties.html
+		uint32_t minorVersion = VK_VERSION_MINOR(vkPhysicalDeviceProperties.apiVersion);
+		uint32_t patchVersion = VK_VERSION_PATCH(vkPhysicalDeviceProperties.apiVersion);
+		
+		//API Version
+		fprintf(gFILE,"apiVersion = %d.%d.%d\n", majorVersion, minorVersion, patchVersion);
+		
+		/*
+		PrintVkInfo() changes
+		3d. Print device name by using "deviceName" member of above struct.
+		*/
+		fprintf(gFILE,"deviceName = %s\n", vkPhysicalDeviceProperties.deviceName);
+		
+		/*
+		PrintVkInfo() changes
+		3e. Use "deviceType" member of above struct in a switch case block and accordingly print device type.
+		*/
+		switch(vkPhysicalDeviceProperties.deviceType)
+		{
+			case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+				fprintf(gFILE,"deviceType = Integrated GPU (iGPU)\n");
+			break;
+			
+			case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+				fprintf(gFILE,"deviceType = Discrete GPU (dGPU)\n");
+			break;
+			
+			case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+				fprintf(gFILE,"deviceType = Virtual GPU (vGPU)\n");
+			break;
+			
+			case VK_PHYSICAL_DEVICE_TYPE_CPU:
+				fprintf(gFILE,"deviceType = CPU\n");
+			break;
+			
+			case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+				fprintf(gFILE,"deviceType = Other\n");
+			break;
+			
+			default:
+				fprintf(gFILE, "deviceType = UNKNOWN\n");
+			break;
+		}
+		
+		/*
+		PrintVkInfo() changes
+		3f. Print hexadecimal Vendor Id of device using "vendorId" member of above struct.
+		*/
+		fprintf(gFILE,"vendorID = 0x%04x\n", vkPhysicalDeviceProperties.vendorID);
+		
+		/*
+		PrintVkInfo() changes
+		3g. Print hexadecimal deviceID of device using "deviceId" member of struct.
+		*/
+		fprintf(gFILE,"deviceID = 0x%04x\n", vkPhysicalDeviceProperties.deviceID);
+	}
+	
+	/*
+	PrintVkInfo() changes
+	3h. Free physicaldevice array here which we removed from if(bFound == VK_TRUE) block of GetPhysicalDevice().
+	*/
+	if(vkPhysicalDevice_array)
+	{
+		free(vkPhysicalDevice_array);
+		vkPhysicalDevice_array = NULL;
+		fprintf(gFILE, "PrintVkInfo(): succedded to free vkPhysicalDevice_array\n");
+	}
 	
 	return vkResult;
 }
