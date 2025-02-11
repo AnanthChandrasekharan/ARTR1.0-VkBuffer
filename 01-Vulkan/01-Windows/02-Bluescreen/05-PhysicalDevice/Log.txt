@@ -14,7 +14,6 @@ FillInstanceExtensionNames(): Vulkan Extension Name = VK_EXT_debug_report
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_EXT_debug_utils
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_EXT_surface_maintenance1
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_EXT_swapchain_colorspace
-FillInstanceExtensionNames(): Vulkan Extension Name = VK_NV_display_stereo
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_NV_external_memory_capabilities
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_KHR_portability_enumeration
 FillInstanceExtensionNames(): Vulkan Extension Name = VK_LUNARG_direct_driver_loading

@@ -720,6 +720,7 @@ VkResult GetPhysicalDevice(void)
 	else if (physicalDeviceCount == 0)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): vkEnumeratePhysicalDevices() first call resulted in 0 physical devices\n");
+		vkResult = VK_ERROR_INITIALIZATION_FAILED;
 		return vkResult;
 	}
 	else
@@ -741,6 +742,7 @@ VkResult GetPhysicalDevice(void)
 	if (vkResult != VK_SUCCESS)
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): vkEnumeratePhysicalDevices() second call failed with error code %d\n", vkResult);
+		vkResult = VK_ERROR_INITIALIZATION_FAILED; //return hardcoded failure
 		return vkResult;
 	}
 	else
@@ -886,7 +888,19 @@ VkResult GetPhysicalDevice(void)
 	else
 	{
 		fprintf(gFILE, "GetPhysicalDevice(): GetPhysicalDevice() failed to obtain graphics supported physical device\n");
+		
+		/*
+		j. free physical device array 
+		*/
+		if(vkPhysicalDevice_array)
+		{
+			free(vkPhysicalDevice_array);
+			vkPhysicalDevice_array = NULL;
+			fprintf(gFILE, "GetPhysicalDevice(): succedded to free vkPhysicalDevice_array\n");
+		}
+		
 		vkResult = VK_ERROR_INITIALIZATION_FAILED;
+		return vkResult;
 	}
 	
 	/*
