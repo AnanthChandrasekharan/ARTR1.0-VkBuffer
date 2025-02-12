@@ -47,7 +47,7 @@ vendorID = 0x10de
 deviceID = 0x1f02
 PrintVkInfo(): succedded to free vkPhysicalDevice_array
 initialize(): PrintVulkanInfo() succedded
-FillDeviceExtensionNames(): First call to vkEnumerateDeviceExtensionProperties() succedded
+FillDeviceExtensionNames(): First call to vkEnumerateDeviceExtensionProperties() succedded and returned 109 count
 FillDeviceExtensionNames(): Second call to vkEnumerateDeviceExtensionProperties() succedded
 FillDeviceExtensionNames(): Vulkan Device Extension Name = VK_EXT_full_screen_exclusive
 FillDeviceExtensionNames(): Vulkan Device Extension Name = VK_KHR_swapchain

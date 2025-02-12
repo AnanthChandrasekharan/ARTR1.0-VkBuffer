@@ -1135,7 +1135,7 @@ VkResult FillDeviceExtensionNames(void)
 	}
 	else
 	{
-		fprintf(gFILE, "FillDeviceExtensionNames(): First call to vkEnumerateDeviceExtensionProperties() succedded\n");
+		fprintf(gFILE, "FillDeviceExtensionNames(): First call to vkEnumerateDeviceExtensionProperties() succedded and returned %u count\n", deviceExtensionCount);
 	}
 
 	/*
