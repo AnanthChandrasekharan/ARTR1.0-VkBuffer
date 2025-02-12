@@ -63,6 +63,14 @@ PrintVulkanInfo() changes
 uint32_t physicalDeviceCount = 0;
 VkPhysicalDevice *vkPhysicalDevice_array = NULL; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkPhysicalDevice.html
 
+//Device extension related variables {In MAC , we need to add portability etensions, so there will be 2 extensions. Similarly for ray tracing there will be atleast 8 extensions.}
+uint32_t enabledDeviceExtensionsCount = 0;
+/*
+VK_KHR_SWAPCHAIN_EXTENSION_NAME
+*/
+const char* enabledDeviceExtensionNames_array[1];
+
+
 // Entry-Point Function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
 {
@@ -311,6 +319,7 @@ VkResult initialize(void)
 	VkResult GetSupportedSurface(void);
 	VkResult GetPhysicalDevice(void);
 	VkResult PrintVulkanInfo(void);
+	VkResult FillDeviceExtensionNames(void);
 	
 	//Variable declarations
 	VkResult vkResult = VK_SUCCESS;
@@ -361,6 +370,20 @@ VkResult initialize(void)
 	else
 	{
 		fprintf(gFILE, "initialize(): PrintVulkanInfo() succedded\n");
+	}
+	
+	/*
+	fill device extensions
+	*/
+	vkResult = FillDeviceExtensionNames();
+	if (vkResult != VK_SUCCESS)
+	{
+		fprintf(gFILE, "initialize(): FillDeviceExtensionNames()  function failed\n");
+		return vkResult;
+	}
+	else
+	{
+		fprintf(gFILE, "initialize(): FillDeviceExtensionNames() succedded\n");
 	}
 	
 	return vkResult;
@@ -600,7 +623,7 @@ VkResult FillInstanceExtensionNames(void)
 		//https://registry.khronos.org/vulkan/specs/latest/man/html/VkExtensionProperties.html
 		instanceExtensionNames_array[i] = (char*)malloc( sizeof(char) * (strlen(vkExtensionProperties_array[i].extensionName) + 1));
 		memcpy(instanceExtensionNames_array[i], vkExtensionProperties_array[i].extensionName, (strlen(vkExtensionProperties_array[i].extensionName) + 1));
-		fprintf(gFILE, "FillInstanceExtensionNames(): Vulkan Extension Name = %s\n", instanceExtensionNames_array[i]);
+		fprintf(gFILE, "FillInstanceExtensionNames(): Vulkan Instance Extension Name = %s\n", instanceExtensionNames_array[i]);
 	}
 
 	/*
@@ -1091,6 +1114,141 @@ VkResult PrintVulkanInfo(void)
 	
 	return vkResult;
 }
+
+VkResult FillDeviceExtensionNames(void)
+{
+	// Code
+	//Variable declarations
+	VkResult vkResult = VK_SUCCESS;
+
+	/*
+	1. Find how many device extensions are supported by Vulkan driver of/for this version and keept the count in a local variable.
+	*/
+	uint32_t deviceExtensionCount = 0;
+
+	//https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateDeviceExtensionProperties.html
+	vkResult = vkEnumerateDeviceExtensionProperties(vkPhysicalDevice_selected, NULL, &deviceExtensionCount, NULL );
+	if (vkResult != VK_SUCCESS)
+	{
+		fprintf(gFILE, "FillDeviceExtensionNames(): First call to vkEnumerateDeviceExtensionProperties()  function failed\n");
+		return vkResult;
+	}
+	else
+	{
+		fprintf(gFILE, "FillDeviceExtensionNames(): First call to vkEnumerateDeviceExtensionProperties() succedded\n");
+	}
+
+	/*
+	 Allocate and fill struct VkExtensionProperties 
+	 (https://registry.khronos.org/vulkan/specs/latest/man/html/VkExtensionProperties.html) structure array, 
+	 corresponding to above count
+	*/
+	VkExtensionProperties* vkExtensionProperties_array = NULL;
+	vkExtensionProperties_array = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * deviceExtensionCount);
+	if (vkExtensionProperties_array != NULL)
+	{
+		//Add log here later for failure
+		//exit(-1);
+	}
+	else
+	{
+		//Add log here later for success
+	}
+
+	vkResult = vkEnumerateDeviceExtensionProperties(vkPhysicalDevice_selected, NULL, &deviceExtensionCount, vkExtensionProperties_array);
+	if (vkResult != VK_SUCCESS)
+	{
+		fprintf(gFILE, "FillDeviceExtensionNames(): Second call to vkEnumerateDeviceExtensionProperties()  function failed\n");
+		return vkResult;
+	}
+	else
+	{
+		fprintf(gFILE, "FillDeviceExtensionNames(): Second call to vkEnumerateDeviceExtensionProperties() succedded\n");
+	}
+
+	/*
+	Fill and display a local string array of extension names obtained from VkExtensionProperties structure array
+	*/
+	char** deviceExtensionNames_array = NULL;
+	deviceExtensionNames_array = (char**)malloc(sizeof(char*) * deviceExtensionCount);
+	if (deviceExtensionNames_array != NULL)
+	{
+		//Add log here later for failure
+		//exit(-1);
+	}
+	else
+	{
+		//Add log here later for success
+	}
+
+	for (uint32_t i =0; i < deviceExtensionCount; i++)
+	{
+		//https://registry.khronos.org/vulkan/specs/latest/man/html/VkExtensionProperties.html
+		deviceExtensionNames_array[i] = (char*)malloc( sizeof(char) * (strlen(vkExtensionProperties_array[i].extensionName) + 1));
+		memcpy(deviceExtensionNames_array[i], vkExtensionProperties_array[i].extensionName, (strlen(vkExtensionProperties_array[i].extensionName) + 1));
+		fprintf(gFILE, "FillDeviceExtensionNames(): Vulkan Device Extension Name = %s\n", deviceExtensionNames_array[i]);
+	}
+
+	/*
+	As not required here onwards, free VkExtensionProperties array
+	*/
+	if (vkExtensionProperties_array)
+	{
+		free(vkExtensionProperties_array);
+		vkExtensionProperties_array = NULL;
+	}
+
+	/*
+	Find whether above extension names contain our required two extensions
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	Accordingly set two global variables, "required extension count" and "required extension names array"
+	*/
+	//https://registry.khronos.org/vulkan/specs/latest/man/html/VkBool32.html -> Vulkan cha bool
+	VkBool32 vulkanSwapchainExtensionFound = VK_FALSE;
+	for (uint32_t i = 0; i < deviceExtensionCount; i++)
+	{
+		if (strcmp(deviceExtensionNames_array[i], VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
+		{
+			vulkanSwapchainExtensionFound = VK_TRUE;
+			enabledDeviceExtensionNames_array[enabledDeviceExtensionsCount++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+		}
+	}
+
+	/*
+	As not needed hence forth , free local string array
+	*/
+	for (uint32_t i =0 ; i < deviceExtensionCount; i++)
+	{
+		free(deviceExtensionNames_array[i]);
+	}
+	free(deviceExtensionNames_array);
+
+	/*
+	Print whether our required device extension names or not (He log madhe yenar. Jithe print asel sarv log madhe yenar)
+	*/
+	if (vulkanSwapchainExtensionFound == VK_FALSE)
+	{
+		//Type mismatch in return VkResult and VKBool32, so return hardcoded failure
+		vkResult = VK_ERROR_INITIALIZATION_FAILED; //return hardcoded failure
+		fprintf(gFILE, "FillDeviceExtensionNames(): VK_KHR_SWAPCHAIN_EXTENSION_NAME not found\n");
+		return vkResult;
+	}
+	else
+	{
+		fprintf(gFILE, "FillDeviceExtensionNames(): VK_KHR_SWAPCHAIN_EXTENSION_NAME is found\n");
+	}
+
+	/*
+	Print only enabled device extension names
+	*/
+	for (uint32_t i = 0; i < enabledDeviceExtensionsCount; i++)
+	{
+		fprintf(gFILE, "FillDeviceExtensionNames(): Enabled Vulkan Device Extension Name = %s\n", enabledDeviceExtensionNames_array[i]);
+	}
+
+	return vkResult;
+}
+
 
 
 
