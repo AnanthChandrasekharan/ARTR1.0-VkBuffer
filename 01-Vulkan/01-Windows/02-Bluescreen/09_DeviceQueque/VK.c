@@ -75,6 +75,10 @@ Vulkan Device
 */
 VkDevice vkDevice = VK_NULL_HANDLE; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkDevice.html
 
+/*
+Device Queque
+*/
+VkQueue vkQueue =  VK_NULL_HANDLE; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkQueue.html
 
 // Entry-Point Function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
@@ -325,6 +329,7 @@ VkResult initialize(void)
 	VkResult GetPhysicalDevice(void);
 	VkResult PrintVulkanInfo(void);
 	VkResult CreateVulKanDevice(void);
+	void GetDeviceQueque(void);
 	
 	//Variable declarations
 	VkResult vkResult = VK_SUCCESS;
@@ -389,6 +394,9 @@ VkResult initialize(void)
 		fprintf(gFILE, "initialize(): CreateVulKanDevice() succedded\n");
 	}
 	
+	//get Device Queque
+	GetDeviceQueque();
+	
 	return vkResult;
 }
 
@@ -429,6 +437,8 @@ void uninitialize(void)
 		}
 		
 		//Destroy Vulkan device
+		
+		//No need to destroy/uninitialize device queque
 		
 		//No need to destroy selected physical device
 		if(vkDevice)
@@ -1317,6 +1327,21 @@ VkResult CreateVulKanDevice(void)
 	}
 	
 	return vkResult;
+}
+
+void GetDeviceQueque(void)
+{
+	//Code
+	vkGetDeviceQueue(vkDevice, graphicsQuequeFamilyIndex_selected, 0, &vkQueue); //https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceQueue.html
+	if(vkQueue == VK_NULL_HANDLE)
+	{
+		fprintf(gFILE, "GetDeviceQueque(): vkGetDeviceQueue() returned NULL for vkQueue\n");
+		return;
+	}
+	else
+	{
+		fprintf(gFILE, "GetDeviceQueque(): vkGetDeviceQueue() succedded\n");
+	}
 }
 
 
