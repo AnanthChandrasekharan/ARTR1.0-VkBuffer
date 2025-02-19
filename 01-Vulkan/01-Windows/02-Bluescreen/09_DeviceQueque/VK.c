@@ -397,6 +397,8 @@ VkResult initialize(void)
 	//get Device Queque
 	GetDeviceQueque();
 	
+	fprintf(gFILE, "************************* End of initialize ******************************\n");
+	
 	return vkResult;
 }
 
@@ -1295,6 +1297,19 @@ VkResult CreateVulKanDevice(void)
 	}
 	
 	/*
+	Newly added code
+	*/
+	VkDeviceQueueCreateInfo vkDeviceQueueCreateInfo; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkDeviceQueueCreateInfo.html
+	memset(&vkDeviceQueueCreateInfo, 0, sizeof(VkDeviceQueueCreateInfo));
+	
+	vkDeviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	vkDeviceQueueCreateInfo.pNext = NULL;
+	vkDeviceQueueCreateInfo.flags = 0;
+	vkDeviceQueueCreateInfo.queueFamilyIndex = graphicsQuequeFamilyIndex_selected;
+	vkDeviceQueueCreateInfo.queueCount = 1;
+	vkDeviceQueueCreateInfo.pQueuePriorities = NULL;
+	
+	/*
 	3. Declare and initialize VkDeviceCreateInfo structure (https://registry.khronos.org/vulkan/specs/latest/man/html/VkDeviceCreateInfo.html).
 	*/
 	VkDeviceCreateInfo vkDeviceCreateInfo;
@@ -1311,6 +1326,8 @@ VkResult CreateVulKanDevice(void)
 	vkDeviceCreateInfo.enabledLayerCount = 0;
 	vkDeviceCreateInfo.ppEnabledLayerNames = NULL;
 	vkDeviceCreateInfo.pEnabledFeatures = NULL;
+	vkDeviceCreateInfo.queueCreateInfoCount = 1;
+	vkDeviceCreateInfo.pQueueCreateInfos = &vkDeviceQueueCreateInfo;
 	
 	/*
 	5. Now call vkCreateDevice to create actual Vulkan device and do error checking.
