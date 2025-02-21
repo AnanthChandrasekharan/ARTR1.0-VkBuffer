@@ -290,6 +290,8 @@ initialize(): CreateVulKanDevice() succedded
 GetDeviceQueque(): vkGetDeviceQueue() succedded
 ************************* End of initialize ******************************
 WinMain(): initialize() succedded
+WndProc() WM_CHAR(F key)-> Program entered Fullscreen.
+WndProc() WM_CHAR(F key)-> Program ended Fullscreen.
 uninitialize(): vkDeviceWaitIdle() is done
 uninitialize(): vkDestroyDevice() is done
 uninitialize(): vkDestroySurfaceKHR() sucedded

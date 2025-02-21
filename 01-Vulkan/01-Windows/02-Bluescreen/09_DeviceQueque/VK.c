@@ -1299,6 +1299,9 @@ VkResult CreateVulKanDevice(void)
 	/*
 	Newly added code
 	*/
+	//float queuePriorities[1]  = {1.0};
+	float queuePriorities[1];
+	queuePriorities[0] = 1.0f;
 	VkDeviceQueueCreateInfo vkDeviceQueueCreateInfo; //https://registry.khronos.org/vulkan/specs/latest/man/html/VkDeviceQueueCreateInfo.html
 	memset(&vkDeviceQueueCreateInfo, 0, sizeof(VkDeviceQueueCreateInfo));
 	
@@ -1307,7 +1310,7 @@ VkResult CreateVulKanDevice(void)
 	vkDeviceQueueCreateInfo.flags = 0;
 	vkDeviceQueueCreateInfo.queueFamilyIndex = graphicsQuequeFamilyIndex_selected;
 	vkDeviceQueueCreateInfo.queueCount = 1;
-	vkDeviceQueueCreateInfo.pQueuePriorities = NULL;
+	vkDeviceQueueCreateInfo.pQueuePriorities = queuePriorities;
 	
 	/*
 	3. Declare and initialize VkDeviceCreateInfo structure (https://registry.khronos.org/vulkan/specs/latest/man/html/VkDeviceCreateInfo.html).
